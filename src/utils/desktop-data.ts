@@ -1,4 +1,3 @@
-
 export type AppWindow = {
   id: string;
   title: string;
@@ -31,6 +30,7 @@ export type MusicTrack = {
   artist: string;
   duration: number;
   cover: string;
+  audioUrl?: string; // Optional URL to the audio file
 };
 
 export const defaultIcons: DesktopIcon[] = [
@@ -169,3 +169,16 @@ export const demoTracks: MusicTrack[] = [
     cover: 'https://images.unsplash.com/photo-1671226366526-d240630baea5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjJ8fG11c2ljJTIwY292ZXJ8ZW58MHx8MHx8fDA%3D'
   }
 ];
+
+export const myTracks: MusicTrack[] = [
+  {
+    id: 'my-track-1',
+    title: 'My Favorite Song',
+    artist: 'My Favorite Artist',
+    duration: 180,
+    cover: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+    audioUrl: ''
+  }
+];
+
+export const allTracks = [...demoTracks, ...myTracks];

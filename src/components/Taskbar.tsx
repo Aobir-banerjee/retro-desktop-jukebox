@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Clock, Music, Folder, Info, Sun, Moon } from 'lucide-react';
-import { AppWindow } from '@/utils/desktop-data';
+import { Clock, Music, Folder, Info, Sun, Moon, Upload } from 'lucide-react';
+import { AppWindow, MusicTrack, allTracks } from '@/utils/desktop-data';
 import { cn } from '@/lib/utils';
 import { Toggle } from '@/components/ui/toggle';
+import { Button } from '@/components/ui/button';
+import { toast } from "@/components/ui/use-toast";
 
 interface TaskbarProps {
   windows: AppWindow[];
@@ -15,6 +17,7 @@ interface TaskbarProps {
 const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFocus }) => {
   const [time, setTime] = React.useState(new Date());
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     const timer = setInterval(() => {
@@ -35,6 +38,79 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
   
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+  
+  const handleUploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+    
+    const file = files[0];
+    
+    // Check if it's a music file
+    if (!file.type.startsWith('audio/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an audio file (mp3, wav, etc.)",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Create a blob URL for the audio file
+    const audioUrl = URL.createObjectURL(file);
+    
+    // Get a clean file name without extension
+    const fileName = file.name.replace(/\.[^/.]+$/, "");
+    
+    // Create a new track
+    const newTrack: MusicTrack = {
+      id: `upload-${Date.now()}`,
+      title: fileName || 'Uploaded Song',
+      artist: 'Custom Upload',
+      duration: 180, // Default duration, will be updated when played
+      cover: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
+      audioUrl: audioUrl
+    };
+    
+    // Add the new track to allTracks array
+    allTracks.push(newTrack);
+    
+    // Show a success message
+    toast({
+      title: "Song added",
+      description: `"${newTrack.title}" has been added to your playlist`
+    });
+    
+    // Open the music player
+    const musicWindow = windows.find(w => w.id === 'music-player');
+    if (musicWindow && !musicWindow.isOpen) {
+      const musicWindowId = 'music-player';
+      if (windows.some(w => w.id === musicWindowId && !w.isOpen)) {
+        openWindow(musicWindowId);
+      }
+    }
+    
+    // Reset the file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+  
+  const openWindow = (id: string) => {
+    const focusWindow = windows.find(w => w.id === id);
+    if (focusWindow) {
+      if (focusWindow.isMinimized) {
+        onRestore(id);
+      } else if (!focusWindow.isFocused) {
+        onFocus(id);
+      }
+    }
   };
   
   return (
@@ -85,6 +161,15 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
       </div>
       
       <div className="flex items-center text-sm space-x-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 rounded-full p-0 flex items-center justify-center dark:text-gray-300"
+          onClick={handleUploadClick}
+        >
+          <Upload size={14} className="text-gray-600 dark:text-gray-400" />
+        </Button>
+        
         <Toggle
           aria-label="Toggle theme"
           className="h-8 w-8 rounded-full p-0 flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600"
@@ -103,6 +188,15 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
           <span>{formatTime(time)}</span>
         </div>
       </div>
+      
+      {/* Hidden file input for uploading songs */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="audio/*"
+        style={{ display: 'none' }}
+      />
     </div>
   );
 };
