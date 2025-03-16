@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Clock, Music, Folder, Info, Sun, Moon, Upload } from 'lucide-react';
 import { AppWindow, MusicTrack, allTracks } from '@/utils/desktop-data';
 import { cn } from '@/lib/utils';
@@ -92,7 +92,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
     if (musicWindow && !musicWindow.isOpen) {
       const musicWindowId = 'music-player';
       if (windows.some(w => w.id === musicWindowId && !w.isOpen)) {
-        openWindow(musicWindowId);
+        onRestore(musicWindowId);
       }
     }
     
