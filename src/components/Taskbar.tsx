@@ -38,7 +38,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
   };
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-12 bg-retro-window/80 backdrop-blur-sm border-t border-retro-border flex items-center justify-between px-4 shadow-md animate-taskbar-slide-up z-40">
+    <div className="fixed bottom-0 left-0 right-0 h-12 bg-retro-window/80 dark:bg-gray-800/90 backdrop-blur-sm border-t border-retro-border dark:border-gray-700 flex items-center justify-between px-4 shadow-md animate-taskbar-slide-up z-40">
       <div className="flex items-center space-x-1">
         {windows.map(window => {
           let IconComponent;
@@ -62,10 +62,10 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
               className={cn(
                 "flex items-center justify-center h-8 px-3 text-sm rounded transition-colors",
                 window.isFocused 
-                  ? "bg-retro-accent text-white" 
+                  ? "bg-retro-accent dark:bg-blue-600 text-white" 
                   : window.isMinimized
-                    ? "bg-gray-200 hover:bg-gray-300" 
-                    : "bg-gray-100 hover:bg-gray-200"
+                    ? "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600" 
+                    : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
               )}
               onClick={() => {
                 if (window.isMinimized) {
@@ -87,7 +87,7 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
       <div className="flex items-center text-sm space-x-4">
         <Toggle
           aria-label="Toggle theme"
-          className="h-8 w-8 rounded-full p-0 flex items-center justify-center"
+          className="h-8 w-8 rounded-full p-0 flex items-center justify-center dark:bg-gray-700 dark:hover:bg-gray-600"
           pressed={theme === 'dark'}
           onPressedChange={toggleTheme}
         >
@@ -98,8 +98,8 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
           )}
         </Toggle>
         
-        <div className="flex items-center">
-          <Clock size={14} className="mr-1.5 text-gray-600" />
+        <div className="flex items-center dark:text-gray-300">
+          <Clock size={14} className="mr-1.5 text-gray-600 dark:text-gray-400" />
           <span>{formatTime(time)}</span>
         </div>
       </div>
