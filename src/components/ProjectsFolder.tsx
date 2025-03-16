@@ -46,9 +46,9 @@ const ProjectsFolder: React.FC<ProjectsFolderProps> = ({ isFocused }) => {
         {viewMode === 'grid' ? (
           <div className="folder-grid">
             {demoProjects.map(project => {
-              const IconComponent = (LucideIcons as Record<string, React.FC<any>>)[
-                project.icon.charAt(0).toUpperCase() + project.icon.slice(1)
-              ] || LucideIcons.FileQuestion;
+              const iconName = project.icon.charAt(0).toUpperCase() + project.icon.slice(1);
+              // Cast to any as an intermediate step to avoid TypeScript errors
+              const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.FileQuestion;
               
               return (
                 <div 
@@ -70,9 +70,9 @@ const ProjectsFolder: React.FC<ProjectsFolderProps> = ({ isFocused }) => {
         ) : (
           <div className="space-y-2">
             {demoProjects.map(project => {
-              const IconComponent = (LucideIcons as Record<string, React.FC<any>>)[
-                project.icon.charAt(0).toUpperCase() + project.icon.slice(1)
-              ] || LucideIcons.FileQuestion;
+              const iconName = project.icon.charAt(0).toUpperCase() + project.icon.slice(1);
+              // Cast to any as an intermediate step to avoid TypeScript errors
+              const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.FileQuestion;
               
               return (
                 <div 

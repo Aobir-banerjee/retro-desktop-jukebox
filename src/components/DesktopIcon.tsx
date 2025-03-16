@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Icon } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { DesktopIcon as DesktopIconType } from '@/utils/desktop-data';
 import { cn } from '@/lib/utils';
@@ -12,10 +11,10 @@ interface DesktopIconProps {
 }
 
 const DesktopIcon: React.FC<DesktopIconProps> = ({ icon, isActive, onClick }) => {
-  // Type assertion to access dynamic icon
-  const IconComponent = (LucideIcons as Record<string, React.FC<any>>)[
-    icon.icon.charAt(0).toUpperCase() + icon.icon.slice(1)
-  ] || LucideIcons.FileQuestion;
+  // Dynamically get the icon component with proper type casting
+  const iconName = icon.icon.charAt(0).toUpperCase() + icon.icon.slice(1);
+  // Cast to any as an intermediate step to avoid TypeScript errors
+  const IconComponent = (LucideIcons as any)[iconName] || LucideIcons.FileQuestion;
 
   return (
     <div 
