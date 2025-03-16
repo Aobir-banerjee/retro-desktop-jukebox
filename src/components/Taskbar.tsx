@@ -1,8 +1,9 @@
 
-import React from 'react';
-import { Clock, Music, Folder, Info } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Clock, Music, Folder, Info, Sun, Moon } from 'lucide-react';
 import { AppWindow } from '@/utils/desktop-data';
 import { cn } from '@/lib/utils';
+import { Toggle } from '@/components/ui/toggle';
 
 interface TaskbarProps {
   windows: AppWindow[];
@@ -13,8 +14,9 @@ interface TaskbarProps {
 
 const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFocus }) => {
   const [time, setTime] = React.useState(new Date());
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setInterval(() => {
       setTime(new Date());
     }, 1000);
@@ -22,8 +24,17 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
     return () => clearInterval(timer);
   }, []);
   
+  useEffect(() => {
+    // Apply theme to document
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
+  
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+  
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
   
   return (
@@ -74,6 +85,19 @@ const Taskbar: React.FC<TaskbarProps> = ({ windows, onMinimize, onRestore, onFoc
       </div>
       
       <div className="flex items-center text-sm space-x-4">
+        <Toggle
+          aria-label="Toggle theme"
+          className="h-8 w-8 rounded-full p-0 flex items-center justify-center"
+          pressed={theme === 'dark'}
+          onPressedChange={toggleTheme}
+        >
+          {theme === 'dark' ? (
+            <Moon size={14} className="text-yellow-300" />
+          ) : (
+            <Sun size={14} className="text-yellow-500" />
+          )}
+        </Toggle>
+        
         <div className="flex items-center">
           <Clock size={14} className="mr-1.5 text-gray-600" />
           <span>{formatTime(time)}</span>
